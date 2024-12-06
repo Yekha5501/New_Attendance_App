@@ -84,35 +84,6 @@
     element.addEventListener("click", onClick);
 </script>
 
- <script>
-    function downloadTableAsExcel() {
-      // Get the table element
-      var table = document.getElementById('myTable');
-
-      // Convert the table to a worksheet
-      var workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-
-      // Generate a binary string representation of the workbook
-      var wbout = XLSX.write(workbook, {bookType: 'xlsx', type: 'binary'});
-
-      // Create a Blob from the binary string
-      var blob = new Blob([s2ab(wbout)], {type: 'application/octet-stream'});
-
-      // Create a download link and trigger the download
-      var link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'table.xlsx';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function s2ab(s) {
-      var buf = new ArrayBuffer(s.length);
-      var view = new Uint8Array(buf);
-      for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-      return buf;
-    }
-  </script>
+ 
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/1292223.cloudwaysapps.com/bwwzkatavt/public_html/resources/views/student/all_qrcodes.blade.php ENDPATH**/ ?>
