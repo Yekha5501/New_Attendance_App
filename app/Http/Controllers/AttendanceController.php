@@ -58,14 +58,15 @@ public function markManualAttendance(Request $request)
     return redirect()->route('attendance.manual')->with('success', 'Attendance marked successfully');
 }
 
-   public function showAttendance()
+public function showAttendance()
 {
-    $students = Student::all();
+    // Paginate the students
+    $students = Student::paginate(6);
+
+    // Retrieve the total number of worship sessions once
+    $totalSessions = WorshipSession::count();
 
     foreach ($students as $student) {
-        // Retrieve the total number of worship sessions
-        $totalSessions = WorshipSession::count();
-
         // Retrieve the total number of worship sessions attended by the student
         $attendedSessions = Worship::where('student_id', $student->id)->count();
 
@@ -80,6 +81,7 @@ public function markManualAttendance(Request $request)
         $student->save();
     }
 
+    // Return the view with the paginated students
     return view('student.attendance', ['students' => $students]);
 }
 
@@ -183,11 +185,22 @@ public function markManualAttendance(Request $request)
         return view('student.qrcode', compact('student'));
     }
 
-    public function viewAllQRCode()
-    {
-        $students = Student::all();
-        return view('student.all_qrcodes', compact('students'));
-    }
+public function viewAllQRCode(Request $request)
+{
+    // Get the search query from the request
+    $searchQuery = $request->input('search', '');
+
+    // Paginate the students, 4 per page, and filter by name or program
+    $students = Student::where('name', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('program_of_study', 'like', '%' . $searchQuery . '%')
+                        ->paginate(4)
+                        ->appends(['search' => $searchQuery]); // Preserve the search query in pagination links
+
+    return view('student.all_qrcodes', compact('students'));
+}
+
+
+
 
 
 public function scanAttendance(Request $request)

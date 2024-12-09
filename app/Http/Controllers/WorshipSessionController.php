@@ -76,7 +76,8 @@ class WorshipSessionController extends Controller
     public function show()
     {
         // Fetch all worship sessions and order them by status ('Progress' first)
-        $worshipSessions = WorshipSession::orderByRaw("FIELD(status, 'Progress', 'Completed')")->get();
+        $worshipSessions = WorshipSession::orderByRaw("FIELD(status, 'Progress', 'Completed')")
+        ->paginate(5); // Show 10 sessions per page
 
         // Fetch attendance records for each worship session
         foreach ($worshipSessions as $worshipSession) {

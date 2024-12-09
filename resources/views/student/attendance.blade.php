@@ -164,14 +164,13 @@
 
 
         <div class="px-6 py-4">
-           <table class="table table-striped" id="myTable">
-                <thead class=" ">
+            <table class="table table-striped" id="myTable">
+                <thead>
                     <tr>
-
                         <th>Name</th>
                         <th>Reg_Number</th>
-                        <th>program</th>
-                        <th>gender</th>
+                        <th>Program</th>
+                        <th>Gender</th>
                         <th>Status</th>
                         <th>Average Grade</th>
                         <th>Actions</th>
@@ -180,7 +179,6 @@
                 <tbody>
                     @foreach ($students as $student)
                     <tr>
-
                         <td>{{ $student->name }}</td>
                         <td>{{ $student->registration_number }}</td>
                         <td>{{ $student->program_of_study }}</td>
@@ -193,11 +191,8 @@
                         </td>
                         <td>
                             <span class="inline-flex">
-                                <!-- Edit -->
                                 <a href="{{ route('students.edit', $student) }}" class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-edit"></i></a>
-                                <!-- Delete -->
                                 <button onclick="openDeleteModal({{ $student->id }})" class="text-red-500 hover:text-red-700 mr-2"><i class="fas fa-trash-alt"></i></button>
-                                <!-- QR Code -->
                                 <a href="{{ route('students.qrcode', $student) }}" class="text-blue-500 hover:text-blue-700"><i class="fas fa-qrcode"></i></a>
                             </span>
                         </td>
@@ -205,6 +200,11 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="mt-4">
+                {{ $students->links() }}
+            </div>
+
         </div>
 
         <!-- Modal HTML -->
@@ -267,9 +267,11 @@
     <script>
         $(document).ready(function() {
             $('#myTable').DataTable({
-                responsive: true
+                responsive: true,
+                paging: false // Disable pagination
             });
         });
+
 
         function openModal() {
             document.getElementById('modal').classList.remove('hidden');
@@ -305,35 +307,42 @@
     </script>
 
     <script>
-    function downloadTableAsExcel() {
-      // Get the table element
-      var table = document.getElementById('myTable');
+        function downloadTableAsExcel() {
+            // Get the table element
+            var table = document.getElementById('myTable');
 
-      // Convert the table to a worksheet
-      var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            // Convert the table to a worksheet
+            var workbook = XLSX.utils.table_to_book(table, {
+                sheet: "Sheet1"
+            });
 
-      // Generate a binary string representation of the workbook
-      var wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+            // Generate a binary string representation of the workbook
+            var wbout = XLSX.write(workbook, {
+                bookType: 'xlsx',
+                type: 'binary'
+            });
 
-      // Create a Blob from the binary string
-      var blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+            // Create a Blob from the binary string
+            var blob = new Blob([s2ab(wbout)], {
+                type: 'application/octet-stream'
+            });
 
-      // Create a download link and trigger the download
-      var link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'students_table.xlsx';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+            // Create a download link and trigger the download
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'students_table.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
-    function s2ab(s) {
-      var buf = new ArrayBuffer(s.length);
-      var view = new Uint8Array(buf);
-      for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-      return buf;
-    }
-  </script>
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+    </script>
 
 </body>
 
