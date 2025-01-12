@@ -44,7 +44,7 @@ class StudentsExport
 
     private function getHeadings(): array
     {
-        return ['Name', 'Registration Number', 'Program', 'Average Grade'];
+        return ['Name', 'Registration Number', 'Program', ' Grade Percentage'];
     }
 
     private function map($student): array

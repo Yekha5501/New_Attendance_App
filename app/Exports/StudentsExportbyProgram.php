@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exports;
 
 use App\Models\Student;
@@ -34,8 +35,8 @@ class StudentsExportbyProgram
         // Set data, now ordered by name
         $row = 2;
         $students = Student::where('program_of_study', $this->program)
-                            ->orderBy('name', 'asc') // Order by student name in alphabetical order
-                            ->get();
+            ->orderBy('name', 'asc') // Order by student name in alphabetical order
+            ->get();
         foreach ($students as $student) {
             $data = $this->map($student);
             $sheet->fromArray($data, NULL, 'A' . $row);
@@ -43,9 +44,21 @@ class StudentsExportbyProgram
         }
 
         // Save the spreadsheet
+        // $writer = new Xlsx($spreadsheet);
+        // $filename = $this->program . '.xlsx';
+        // $writer->save(Storage::path($filename));
+
         $writer = new Xlsx($spreadsheet);
-        $filename = $this->program . '.xlsx';
+
+        // Sanitize the program name to replace invalid characters
+        $sanitizedProgramName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $this->program);
+
+        // Generate the filename with the sanitized program name
+        $filename = $sanitizedProgramName . '.xlsx';
+
+        // Save the spreadsheet to the storage path
         $writer->save(Storage::path($filename));
+
 
         return response()->download(Storage::path($filename))->deleteFileAfterSend(true);
     }
@@ -55,7 +68,7 @@ class StudentsExportbyProgram
         return [
             'Name',
             'Registration Number',
-            'Average Grade'
+            'Grade Percentage'
         ];
     }
 

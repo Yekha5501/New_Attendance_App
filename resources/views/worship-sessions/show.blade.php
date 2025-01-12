@@ -53,7 +53,7 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th class="px-6 py-3">Worship Session ID</th>
+                       
                         <th class="px-6 py-3">Title</th>
                         <th class="px-6 py-3">Date</th>
                         <th class="px-6 py-3">Type</th>
@@ -64,7 +64,7 @@
                 <tbody id="tableBody">
                     @foreach($worshipSessions as $worshipSession)
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="px-6 py-4">{{ $worshipSession->id }}</td>
+                 
                         <td class="px-6 py-4">{{ $worshipSession->title }}</td>
                         <td class="px-6 py-4">{{ $worshipSession->date }}</td>
                         <td class="px-6 py-4">{{ $worshipSession->type }}</td>

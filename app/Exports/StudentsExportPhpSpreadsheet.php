@@ -58,7 +58,7 @@ class StudentsExportPhpSpreadsheet
         return array_merge(
             ['Name',  'Registration Number'],
             $sessionDates,
-            ['Average Grade']
+            ['Grade Percentage']
         );
     }
 

@@ -340,18 +340,18 @@
         <span class="tooltip">Dashboard</span>
       </li>
       <li>
-        <a href="{{ route('mobile-users.index')}}">
-          <i class='bx bx-user'></i>
-          <span class="links_name">System Users</span>
-        </a>
-        <span class="tooltip">System Users</span>
-      </li>
-      <li>
         <a href="{{ route('attendance') }}">
           <i class='bx bx-user'></i>
           <span class="links_name">Students</span>
         </a>
         <span class="tooltip">Students</span>
+      </li>
+      <li>
+        <a href="{{ route('mobile-users.index')}}">
+          <i class='bx bx-user'></i>
+          <span class="links_name">System Users</span>
+        </a>
+        <span class="tooltip">System Users</span>
       </li>
       <li>
         <a href="{{ route('worship-sessions.show') }}">

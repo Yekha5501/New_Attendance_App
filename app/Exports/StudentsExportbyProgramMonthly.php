@@ -21,7 +21,7 @@ class StudentsExportbyProgramMonthly
     {
         // Default to current month/year if not provided
         $this->program = $program;
-        $this->monthYear = $monthYear ?? date('Y-m'); 
+        $this->monthYear = $monthYear ?? date('Y-m');
     }
 
     public function export()
@@ -89,9 +89,16 @@ class StudentsExportbyProgramMonthly
         $sheet->getStyle('B2:D' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
 
         // Save the spreadsheet to storage
+        // $writer = new Xlsx($spreadsheet);
+        // $filename = $this->program . '-' . $this->monthYear . '.xlsx'; // Include program and monthYear in filename
+        // $writer->save(Storage::path($filename));
+
+
         $writer = new Xlsx($spreadsheet);
-        $filename = $this->program . '-' . $this->monthYear . '.xlsx'; // Include program and monthYear in filename
+        $sanitizedProgramName = str_replace(['/', '\\'], '-', $this->program); // Sanitize program name
+        $filename = $sanitizedProgramName . '-' . $this->monthYear . '.xlsx'; // Use sanitized name
         $writer->save(Storage::path($filename));
+
 
         // Download the file and delete after sending
         return response()->download(Storage::path($filename))->deleteFileAfterSend(true);
@@ -104,7 +111,7 @@ class StudentsExportbyProgramMonthly
             'Name',
             'Attended Sessions',
             'Total Worship Sessions',
-            'Grade (%)',
+            'Grade Percentage',
         ];
     }
 }

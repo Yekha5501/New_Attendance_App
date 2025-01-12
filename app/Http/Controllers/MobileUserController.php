@@ -10,11 +10,13 @@ class MobileUserController extends Controller
     //
   
 
-   public function index()
+public function index()
 {
-    // Exclude the user with the email 'yekhapmandindi@gmail.com'
-    $mobileUsers = User::where('email', '!=', 'yekhapmandindi@gmail.com')->get();
+    // Fetch mobile users and paginate (5 users per page)
+    $mobileUsers = User::paginate(5);
+
     return view('mobile-users.index', compact('mobileUsers'));
 }
+
 
 }

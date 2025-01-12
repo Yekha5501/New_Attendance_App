@@ -165,6 +165,19 @@
 
 
         <div class="px-6 py-4">
+            <!-- Search Bar -->
+            <div class="flex justify-between items-center mb-4">
+                <form action="<?php echo e(route('attendance')); ?>" method="GET" class="flex w-1/2">
+                    <input type="text" name="search" class="w-3/4 p-2 border border-gray-300 rounded" value="<?php echo e(request()->input('search')); ?>" placeholder="Search by name, reg. number, or program">
+                    <button type="submit" class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Search
+                    </button>
+                </form>
+            </div>
+
+            
+
+            <!-- Attendance Table -->
             <table class="table table-striped" id="myTable">
                 <thead>
                     <tr>
@@ -173,7 +186,7 @@
                         <th>Program</th>
                         <th>Gender</th>
                         <th>Status</th>
-                        <th>Average Grade</th>
+                        <th>Grade Percentage</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -202,11 +215,11 @@
                 </tbody>
             </table>
 
+            <!-- Pagination Links -->
             <div class="mt-4">
-                <?php echo e($students->links()); ?>
+                <?php echo e($students->appends(['search' => request()->input('search')])->links()); ?>
 
             </div>
-
         </div>
 
         <!-- Modal HTML -->
@@ -270,7 +283,8 @@
         $(document).ready(function() {
             $('#myTable').DataTable({
                 responsive: true,
-                paging: false // Disable pagination
+                paging: false, // Disable pagination
+                searching: false // Disable search functionality
             });
         });
 
