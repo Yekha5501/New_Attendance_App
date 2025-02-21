@@ -22,7 +22,7 @@
 <div class="min-h-screen flex items-center justify-center border-4 border-blue-500">
     <div class="login-card max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-lg">
         <!-- Logo Section -->
-        <div class="text-2xl font-bold text-center">{{ __('Malamulo College Worship Portal') }}</div>
+        <div class="text-2xl font-bold text-center">{{ __('ShopKlip') }}</div>
 
         <div class="flex justify-center mt-4 mb-4">
             <img src="{{ asset('storage/logo/logo.png') }}" alt="Logo" class="h-24 w-24">

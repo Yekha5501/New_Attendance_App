@@ -20,6 +20,75 @@ class AttendanceController extends Controller
 
 {
 
+public function showUploadForm()
+{
+    return view('attendance.upload');
+}
+
+// Handle the file upload and process attendance
+
+// Handle the file upload and process attendance
+public function uploadAttendance(Request $request)
+{
+    $request->validate([
+        'attendance_file' => 'required|mimes:xlsx,xls,csv'
+    ]);
+
+    $file = $request->file('attendance_file');
+    $spreadsheet = IOFactory::load($file);
+    $sheet = $spreadsheet->getActiveSheet();
+    $rows = $sheet->toArray();
+
+    // Get the latest worship session (completed status)
+    $latestSession = WorshipSession::orderBy('created_at', 'desc')->first();
+
+    // Check if the latest session is not "Completed" and throw an error if it's "Progress"
+    if (!$latestSession) {
+        return back()->with('error', 'No worship session found.');
+    }
+
+    if ($latestSession->status !== 'Completed') {
+        return back()->with('error', 'Please set the worship session to Completed before uploading attendance.');
+    }
+
+    $attendanceRecords = [];
+
+    foreach ($rows as $index => $row) {
+        if ($index === 0) continue; // Skip header row
+
+        $registrationNumber = trim($row[0]); // First column: Registration Number
+
+        // Check if student exists
+        $student = Student::where('registration_number', $registrationNumber)->first();
+        if (!$student) continue;
+
+        // Check if attendance already exists
+        $existingAttendance = Worship::where('worship_session_id', $latestSession->id)
+            ->where('student_id', $student->id)
+            ->exists();
+
+        if (!$existingAttendance) {
+            $attendanceRecords[] = [
+                'worship_session_id' => $latestSession->id,
+                'student_id' => $student->id,
+                'attendance' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+    }
+
+    // Insert attendance records in bulk
+    if (!empty($attendanceRecords)) {
+        Worship::insert($attendanceRecords);
+    }
+
+    return redirect()->route('attendance.upload.form')
+                     ->with('success', 'Attendance Marked successfully.');
+}
+
+
+
     public function showManualAttendanceForm()
     {
         $worshipSessions = WorshipSession::whereDate('date', today())

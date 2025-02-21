@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class WorshipSession extends Model
 {
-    protected $fillable = ['date','title','type','status'];
+    protected $fillable = ['date','title','type','status','time_created'];
 
     public function attendance()
     {

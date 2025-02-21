@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Exports;
 
 use App\Models\Student;
@@ -34,17 +33,19 @@ class StudentsExport
             $row++;
         }
 
-        // Save the spreadsheet
+        // Save the spreadsheet to storage (permanent location)
         $writer = new Xlsx($spreadsheet);
-        $filename = 'students_data.xlsx';
-        $writer->save(Storage::path($filename));
+        $filename = 'students_data_' . now()->format('Ymd_His') . '.xlsx';  // Optional: Add timestamp to filename to avoid overwriting
+        $filePath = Storage::disk('local')->path($filename);
+        $writer->save($filePath);
 
-        return response()->download(Storage::path($filename))->deleteFileAfterSend(true);
+        // Return response with the file download and keep it in storage
+        return response()->download($filePath);  // This will serve the file for download
     }
 
     private function getHeadings(): array
     {
-        return ['Name', 'Registration Number', 'Program', ' Grade Percentage'];
+        return ['Name', 'Registration Number', 'Program', 'Grade Percentage'];
     }
 
     private function map($student): array

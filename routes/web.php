@@ -4,6 +4,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WorshipSessionController;
 use App\Models\WorshipSession;
+use App\Http\Controllers\ChatbotController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\CustomRegisterController;
 use App\Http\Controllers\EmailController;
@@ -29,12 +30,28 @@ Route::get('/', function () {
 }); //Routes by Pempho
 
 
+Route::get('/get-excel', function () {
+    $path = storage_path('app/students_data_20250216_132712.xlsx');
+    if (!file_exists($path)) {
+        return response()->json(['error' => 'File not found'], 404);
+    }
+    return response()->download($path);
+});
+  Route::post('/ask-ai', [ChatbotController::class, 'askAI']);
+ Route::post('/query', [ChatbotController::class, 'query']);
+
+    Route::get('/chatbot', function () {
+    return view('chatbot'); // Make sure you have chatbot.blade.php in resources/views
+});
 
 //Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/attendance', [AttendanceController::class, 'showAttendance'])->name('attendance');
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
+  
+
 
 
     // Route to show the manual attendance form
@@ -44,6 +61,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/worship-sessions/{id}/manual-attendance', [WorshipSessionController::class, 'showManualAttendanceForm'])->name('worship-sessions.manual-attendance');
     Route::post('/worship-sessions/{id}/store-attendance', [WorshipSessionController::class, 'storeAttendance'])->name('worship-sessions.store-attendance');
 
+
+
+    Route::get('/attendance/upload', [AttendanceController::class, 'showUploadForm'])->name('attendance.upload.form');
+    Route::post('/attendance/upload', [AttendanceController::class, 'uploadAttendance'])->name('attendance.upload');
 
 
 

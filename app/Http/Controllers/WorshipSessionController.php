@@ -102,34 +102,7 @@ class WorshipSessionController extends Controller
     return view('worship-sessions.manual-attendance', compact('worshipSession', 'students'));
 }
 
-public function storreAttendance(Request $request, $worshipSessionId)
-{
-    // Loop through each student attendance data from the form
-    foreach ($request->attendance as $studentId => $attendanceValue) {
-        // Find the existing attendance record for the given student and worship session
-        $attendance = Worship::where('student_id', $studentId)
-                             ->where('worship_session_id', $worshipSessionId)
-                             ->first();
 
-        // If the attendance record exists, update it
-        if ($attendance) {
-            $attendance->attendance = $attendanceValue;
-            $attendance->save();
-        }
-        // If the attendance record does not exist, create a new one
-        else {
-            Worship::create([
-                'student_id' => $studentId,
-                'attendance' => $attendanceValue,
-                'worship_session_id' => $worshipSessionId,
-            ]);
-        }
-    }
-
-    // Return back with success message
-    return redirect()->route('worship-sessions.show', $worshipSessionId)
-                     ->with('success', 'Attendance has been successfully updated.');
-}
 
 public function storeAttendance(Request $request, $worshipSessionId)
 {
@@ -177,46 +150,50 @@ public function storeAttendance(Request $request, $worshipSessionId)
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        try {
-            // Check if there is any session in progress
-            $sessionInProgress = WorshipSession::where('status', 'Progress')->exists();
+   public function store(Request $request)
+{
+    try {
+        // Check if there is any session in progress
+        $sessionInProgress = WorshipSession::where('status', 'Progress')->exists();
 
-            if ($sessionInProgress) {
-                return redirect()->back()->with('error', 'Cannot create a new session while there is one in progress.');
-            }
-
-            // Validate the request data
-            $validatedData = $request->validate([
-                'title' => 'required|string',
-                'date' => 'required|date',
-                'type' => 'required|in:Morning,Evening',
-            ]);
-
-            // Generate a random worship session ID starting with "MAU"
-            $worshipSessionId = 'MAU' . rand(1000, 9999); // Example: MAU1234
-
-            // Create a new worship session
-            $worshipSession = new WorshipSession();
-            $worshipSession->worship_session_id = $worshipSessionId;
-            $worshipSession->title = $validatedData['title'];
-            $worshipSession->date = $validatedData['date'];
-            $worshipSession->type = $validatedData['type'];
-            $worshipSession->status = 'Progress'; // Set status to Progress
-            $worshipSession->save();
-
-            // Redirect back with a success message
-            return redirect()->back()->with('success', 'Worship session created successfully');
-        } catch (\Exception $e) {
-            // Log the error
-            \Log::error('Error creating worship session: ' . $e->getMessage());
-
-            // Redirect back with an error message
-            \Session::put('error', 'Cannot create a new session while there is one in progress.');
-            return redirect()->back();
+        if ($sessionInProgress) {
+            return redirect()->back()->with('error', 'Cannot create a new session while there is one in progress.');
         }
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'title' => 'required|string',
+            'date' => 'required|date',
+            'type' => 'required|in:Morning,Evening',
+        ]);
+
+        // Generate a random worship session ID starting with "MAU"
+        $worshipSessionId = 'MAU' . rand(1000, 9999); // Example: MAU1234
+
+        // Get the local timestamp for the new session
+        $localTimestamp = now()->timezone('Africa/Blantyre'); // Adjust timezone as needed
+
+        // Create a new worship session
+        $worshipSession = new WorshipSession();
+        $worshipSession->worship_session_id = $worshipSessionId;
+        $worshipSession->title = $validatedData['title'];
+        $worshipSession->date = $validatedData['date'];
+        $worshipSession->type = $validatedData['type'];
+        $worshipSession->status = 'Progress'; // Set status to Progress
+        $worshipSession->time_created = $localTimestamp;
+        $worshipSession->save();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Worship session created successfully');
+    } catch (\Exception $e) {
+        // Log the error
+        \Log::error('Error creating worship session: ' . $e->getMessage());
+
+        // Redirect back with an error message
+        \Session::put('error', 'Cannot create a new session while there is one in progress.');
+        return redirect()->back();
     }
+}
 
 
     /**
